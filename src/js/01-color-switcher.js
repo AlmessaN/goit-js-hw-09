@@ -11,7 +11,8 @@ start.onclick = () => {
   console.log(`start`);
   start.disabled = true;
   stop.disabled = false;
-  timer = setInterval(intervalColor, 1000);
+  timer = setInterval(
+  intervalColor, 1000);
   intervalColor();
 };
 const intervalColor = () => {
