@@ -1,45 +1,42 @@
-import Notiflix from 'notiflix';
-
+import Notiflix from "notiflix";
 const form = document.querySelector('.form');
-const firstDelay = document.querySelector('input[name="delay"]');
-const step = document.querySelector('input[name="step"]');
-const amount = document.querySelector('input[name="amount"]');
+const submitBtn = document.querySelector('button[type = submit]');
 
-const submitClick = event => {
+function createPromise(position, delay) {
+    return new Promise ((resolve, reject) => {
+      setTimeout ( () => {
+        const shouldResolve = Math.random() > 0.3;
+        if (shouldResolve) {
+          resolve({position, delay});
+        } else {
+          reject({position, delay});
+        }
+      }, delay);
+  });
+}
+
+submitBtn.addEventListener('click', onClick);
+function onClick (event) {
   event.preventDefault();
+  
+  let delay = Number(document.querySelector('input[name = delay]').value);
+  const step = Number(document.querySelector('input[name = step]').value);
+  const amount = Number(document.querySelector('input[name = amount]').value);
 
-  const delayValue = parseInt(form.delay.value);
-  const stepValue = parseInt(form.step.value);
-  const amountValue = parseInt(form.amount.value);
-
-  let delay = delayValue;
-  for (let position = 1; position <= amountValue; position += 1) {
-    delay += stepValue;
+  for (let position = 1; position <= amount; position += 1) {
 
     createPromise(position, delay)
       .then(({ position, delay }) => {
-        Notiflix.Notify.success(
-          `✅ Fulfilled promise ${position} in ${delay}ms`
-        );
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
-        Notiflix.Notify.failure(
-          `❌ Rejected promise ${position} in ${delay}ms`
-        );
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
-  }
-};
-form.addEventListener('submit', submitClick);
 
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (shouldResolve) {
-        resolve({ position, delay });
-      } else {
-        reject({ position, delay });
-      }
-    }, delay);
-  });
+    delay += step;
+  }
+
+  setTimeout ( () => { form.reset();}, delay*2);
 }
